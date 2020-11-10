@@ -12,6 +12,9 @@
   "license": "ISC",
   "dependencies": {
     "express": "^4.17.1",
+    "lodash.clonedeep": "^4.5.0",
+    "randomstring": "^1.1.5",
+    "shuffle-array": "^1.0.1",
     "socket.io": "^3.0.1"
   }
 }
