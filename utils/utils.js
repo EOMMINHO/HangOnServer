@@ -1,8 +1,11 @@
 const randomstring = require("randomstring");
 
 function getRemainSeat(infoObj, roomName) {
+  let seatNumbers = Object.keys(infoObj[roomName].participants).map((name) => {
+    return infoObj[roomName].participants[name].seatNumber;
+  });
   for (let i = 1; i <= infoObj[roomName].maxSeats; i++) {
-    if (!Object.values(infoObj[roomName].participants).includes(i)) {
+    if (!seatNumbers.includes(i)) {
       return i;
     }
   }
@@ -18,5 +21,16 @@ function newRoomName(infoObj) {
   }
 }
 
+function isEveryAttention(infoObj) {
+  let attention = Object.keys(infoObj[roomName].participants).map((name) => {
+    return infoObj[roomName].participants[name].attention;
+  });
+  if (attention.includes(false)) {
+    return false;
+  }
+  return true;
+}
+
 module.exports.getRemainSeat = getRemainSeat;
 module.exports.newRoomName = newRoomName;
+module.exports.isEveryAttention = isEveryAttention;

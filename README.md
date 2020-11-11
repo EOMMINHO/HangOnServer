@@ -48,7 +48,7 @@ Every API follows the above rull.
 
 ```
 {
-  isEmpty: true,
+  isEmpty: false,
   participants: {
       GilDong: 1,
       Buffet: 3,

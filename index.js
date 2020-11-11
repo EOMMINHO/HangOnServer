@@ -11,6 +11,7 @@ let connection = require("./router/connection");
 const utils = require("./utils/utils");
 const shuffle = require("shuffle-array");
 const cloneDeep = require("lodash.clonedeep");
+const { info } = require("console");
 
 // Global variables
 let roomSchema = {
@@ -19,7 +20,12 @@ let roomSchema = {
   maxSeats: 8,
   clinkInProgress: false,
   gameInProgress: false,
-  attentionInProgress: false
+  attentionInProgress: false,
+};
+
+let participantSchema = {
+  seatNumber: null,
+  attention: false,
 };
 
 let infoObj = {};
@@ -56,7 +62,8 @@ io.on("connection", (socket) => {
     socket.roomName = emptyRoom;
     socket.playerName = playerName;
     infoObj[emptyRoom].isEmpty = false;
-    infoObj[emptyRoom].participants[playerName] = 1;
+    infoObj[emptyRoom].participants[playerName] = cloneDeep(participantSchema);
+    infoObj[emptyRoom].participants[playerName].seatNumber = 1;
     // emit message
     socket.emit("hostResponse", emptyRoom, infoObj[emptyRoom].participants);
   });
@@ -67,10 +74,10 @@ io.on("connection", (socket) => {
       socket.join(roomName);
       socket.roomName = roomName;
       socket.playerName = playerName;
-      infoObj[roomName].participants[playerName] = utils.getRemainSeat(
-        infoObj,
-        roomName
-      );
+      infoObj[roomName].participants[playerName] = cloneDeep(participantSchema);
+      infoObj[roomName].participants[
+        playerName
+      ].seatNumber = utils.getRemainSeat(infoObj, roomName);
       io.to(roomName).emit(
         "joinResponse",
         true,
@@ -84,16 +91,24 @@ io.on("connection", (socket) => {
   // Clink call
   socket.on("clink", (playerName, roomName) => {
     if (infoObj[roomName].clinkInProgress) {
-      io.to(roomName).emit("clinkFail", playerName)
-      // 누가 사용 중이면 요청 실패 전송
+      // someone already request clink
+      socket.emit("clinkResponse", false, playerName);
     } else {
-      io.to(roomName).emit("clinkResponse", playerName);
+      infoObj[roomName].clinkInProgress = true;
+      io.to(roomName).emit("clinkResponse", true, playerName);
+    }
+  });
+  // Clink Agreement call
+  socket.on("clinkAgree", (playerName, roomName) => {
+    if (infoObj[roomName].clinkInProgress) {
+      // someone already request clink
+      io.to(roomName).emit("clinkAgreeResponse", playerName);
     }
   });
   // Game call
   socket.on("game", (playerName, gameName, roomName) => {
     if (infoObj[roomName].gameInProgress) {
-      io.to(roomName).emit("gameFail", playerName)
+      io.to(roomName).emit("gameFail", playerName);
       // 누가 사용 중이면 요청 실패 전송
     } else {
       io.to(roomName).emit("gameResponse", playerName, gameName);
@@ -102,10 +117,26 @@ io.on("connection", (socket) => {
   // Attention call
   socket.on("attention", (playerName, roomName) => {
     if (infoObj[roomName].attentionInProgress) {
-      io.to(roomName).emit("attentionFail", playerName)
-      // 누가 사용 중이면 요청 실패 전송
+      socket.emit("attentionResponse", false, playerName);
     } else {
-      io.to(roomName).emit("attentionResponse", playerName);
+      infoObj[roomName].attentionInProgress = true;
+      infoObj[roomName].participants[playerName].attention = true;
+      io.to(roomName).emit(
+        "attentionResponse",
+        true,
+        infoObj[roomName].participants
+      );
+    }
+  });
+  // Attention agree call
+  socket.on("attentionAgree", (playerName, roomName) => {
+    infoObj[roomName].participants[playerName].attention = true;
+    io.to(roomName).emit(
+      "attentionAgreeResponse",
+      infoObj[roomName].participants
+    );
+    if (utils.isEveryAttention(infoObj)) {
+      infoObj[roomName].attentionInProgress = false;
     }
   });
   // Seat Swap
