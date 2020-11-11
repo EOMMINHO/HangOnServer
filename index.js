@@ -18,13 +18,7 @@ let roomSchema = {
   maxSeats: 8,
 };
 
-let infoObj = {
-  room1: {
-    isEmpty: true,
-    participants: {},
-    maxSeats: 8,
-  },
-};
+let infoObj = {};
 
 // Routers
 app.use("/connection", connection);
@@ -37,23 +31,21 @@ io.on("connection", (socket) => {
     if (socket.roomName && socket.playerName) {
       delete infoObj[socket.roomName].participants[socket.playerName];
       if (Object.keys(infoObj[socket.roomName].participants).length === 0) {
-        infoObj[socket.roomName].isEmpty = true;
+        delete infoObj[socket.roomName];
+      } else {
+        io.to(socket.roomName).emit(
+          "disconnectResponse",
+          infoObj[socket.roomName].participants
+        );
       }
-      console.log(
-        `User ${socket.playerName} in room ${socket.roomName} disconnected`
-      );
     }
     console.log(infoObj);
   });
   // Server received a host call
   socket.on("host", (playerName) => {
-    // find an empty room
-    let emptyRoom = Object.keys(infoObj).find((room) => infoObj[room].isEmpty);
-    if (emptyRoom === undefined) {
-      console.log("NOTICE: FULL ROOM");
-      emptyRoom = utils.newRoomName(infoObj);
-      infoObj[emptyRoom] = cloneDeep(roomSchema);
-    }
+    // make an empty room
+    let emptyRoom = utils.newRoomName(infoObj);
+    infoObj[emptyRoom] = cloneDeep(roomSchema);
     console.log(`${emptyRoom} has been hosted`);
     // change object information
     socket.join(emptyRoom);
@@ -62,7 +54,7 @@ io.on("connection", (socket) => {
     infoObj[emptyRoom].isEmpty = false;
     infoObj[emptyRoom].participants[playerName] = 1;
     // emit message
-    socket.emit("hostReady", emptyRoom);
+    socket.emit("hostResponse", emptyRoom, infoObj[emptyRoom].participants);
   });
   // Server received a join call
   socket.on("join", (playerName, roomName) => {
@@ -75,10 +67,14 @@ io.on("connection", (socket) => {
         infoObj,
         roomName
       );
-      io.to(roomName).emit("newJoin", true);
+      io.to(roomName).emit(
+        "joinResponse",
+        true,
+        infoObj[roomName].participants
+      );
     } else {
       // fail to enter the room
-      io.to(roomName).emit("newJoin", false);
+      socket.emit("joinResponse", false);
     }
   });
   // Clink call
@@ -116,6 +112,7 @@ io.on("connection", (socket) => {
   socket.on("backgroundSound", (roomName) => {});
 });
 
+// Server listening
 http.listen(5000, () => {
   console.log("listening on port 5000");
 });

@@ -4,6 +4,10 @@ This is a KAIST CS473 Project.
 
 # Usage
 
+## Deploy
+
+command "npm start" will start the server with PORT 5000.
+
 ## API call
 
 The following text shows how to call API as a socket io message.
@@ -14,9 +18,9 @@ The following text shows how to call API as a socket io message.
 Every API follows the above rull.
 
 - host (playerName)
-  - (hostReady) returns the room name created
+  - (hostResponse) returns the room name created
 - join (playerName, roomName)
-  - (newJoin) return true if successful, otherwise return false
+  - (joinResponse) return true if successful, otherwise return false
 - clink (playerName, roomName)
   - (clinkResponse) return the player name who requested clinking
 - game (playerName, gameName, roomName)

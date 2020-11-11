@@ -10,10 +10,12 @@ function getRemainSeat(infoObj, roomName) {
 
 function newRoomName(infoObj) {
   let rand = randomstring.generate(7);
-  while (!Object.keys(infoObj).includes(rand)) {
+  while (true) {
+    if (!Object.keys(infoObj).includes(rand)) {
+      return rand;
+    }
     rand = randomstring.generate(7);
   }
-  return rand;
 }
 
 module.exports.getRemainSeat = getRemainSeat;
