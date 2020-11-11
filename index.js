@@ -1,3 +1,4 @@
+require("dotenv").config();
 let app = require("express")();
 let http = require("http").createServer(app);
 let io = require("socket.io")(http, {
@@ -113,6 +114,6 @@ io.on("connection", (socket) => {
 });
 
 // Server listening
-http.listen(5000, () => {
-  console.log("listening on port 5000");
+http.listen(process.env.PORT, () => {
+  console.log(`listening on port ${process.env.PORT}`);
 });
