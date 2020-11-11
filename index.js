@@ -17,6 +17,9 @@ let roomSchema = {
   isEmpty: true,
   participants: {},
   maxSeats: 8,
+  clinkInProgress: false,
+  gameInProgress: false,
+  attentionInProgress: false
 };
 
 let infoObj = {};
@@ -80,15 +83,30 @@ io.on("connection", (socket) => {
   });
   // Clink call
   socket.on("clink", (playerName, roomName) => {
-    io.to(roomName).emit("clinkResponse", playerName);
+    if (infoObj[roomName].clinkInProgress) {
+      io.to(roomName).emit("clinkFail", playerName)
+      // 누가 사용 중이면 요청 실패 전송
+    } else {
+      io.to(roomName).emit("clinkResponse", playerName);
+    }
   });
   // Game call
   socket.on("game", (playerName, gameName, roomName) => {
-    io.to(roomName).emit("gameResponse", playerName, gameName);
+    if (infoObj[roomName].gameInProgress) {
+      io.to(roomName).emit("gameFail", playerName)
+      // 누가 사용 중이면 요청 실패 전송
+    } else {
+      io.to(roomName).emit("gameResponse", playerName, gameName);
+    }
   });
   // Attention call
   socket.on("attention", (playerName, roomName) => {
-    io.to(roomName).emit("attentionResponse", playerName);
+    if (infoObj[roomName].attentionInProgress) {
+      io.to(roomName).emit("attentionFail", playerName)
+      // 누가 사용 중이면 요청 실패 전송
+    } else {
+      io.to(roomName).emit("attentionResponse", playerName);
+    }
   });
   // Seat Swap
   socket.on("seatSwap", (playerName1, playerName2, roomName) => {
