@@ -11,7 +11,6 @@ let connection = require("./router/connection");
 const utils = require("./utils/utils");
 const shuffle = require("shuffle-array");
 const cloneDeep = require("lodash.clonedeep");
-const { info } = require("console");
 
 // Global variables
 let roomSchema = {
@@ -45,7 +44,8 @@ io.on("connection", (socket) => {
       } else {
         io.to(socket.roomName).emit(
           "disconnectResponse",
-          infoObj[socket.roomName].participants
+          infoObj[socket.roomName].participants,
+          socket.playerName
         );
       }
     }
@@ -160,6 +160,10 @@ io.on("connection", (socket) => {
   socket.on("backgroundImage", (roomName) => {});
   // Background Noise
   socket.on("backgroundSound", (roomName) => {});
+  // video chat
+  socket.on("RTC_offer", (data, offerer, receiver, roomName) => {
+    socket.to(roomName).emit("RTC_answer", offerer, receiver, data);
+  });
 });
 
 // Server listening
