@@ -13,6 +13,16 @@ const shuffle = require("shuffle-array");
 const cloneDeep = require("lodash.clonedeep");
 const { info } = require("console");
 
+let dataChannelSend = document.getElementById("dataChannelSend");
+let dataChannelReceive = document.getElementById("dataChannelReceive");
+let sendBtn = document.getElementById("send");
+let pcConstraint;
+let dataConstraint;
+let localConnection;
+let remoteConnection;
+let sendChannel;
+let receiveChannel;
+
 // Global variables
 let roomSchema = {
   isEmpty: true,
@@ -66,6 +76,7 @@ io.on("connection", (socket) => {
     infoObj[emptyRoom].participants[playerName].seatNumber = 1;
     // emit message
     socket.emit("hostResponse", emptyRoom, infoObj[emptyRoom].participants);
+    createConnection();
   });
   // Server received a join call
   socket.on("join", (playerName, roomName) => {
@@ -160,6 +171,24 @@ io.on("connection", (socket) => {
   socket.on("backgroundImage", (roomName) => {});
   // Background Noise
   socket.on("backgroundSound", (roomName) => {});
+
+  // WebRTC
+  socket.on('start_call', (roomId) => {
+    console.log(`Broadcasting start_call event to peers in room ${roomId}`)
+    socket.broadcast.to(roomId).emit('start_call')
+  })
+  socket.on('webrtc_offer', (event) => {
+    console.log(`Broadcasting webrtc_offer event to peers in room ${event.roomId}`)
+    socket.broadcast.to(event.roomId).emit('webrtc_offer', event.sdp)
+  })
+  socket.on('webrtc_answer', (event) => {
+    console.log(`Broadcasting webrtc_answer event to peers in room ${event.roomId}`)
+    socket.broadcast.to(event.roomId).emit('webrtc_answer', event.sdp)
+  })
+  socket.on('webrtc_ice_candidate', (event) => {
+    console.log(`Broadcasting webrtc_ice_candidate event to peers in room ${event.roomId}`)
+    socket.broadcast.to(event.roomId).emit('webrtc_ice_candidate', event)
+  })
 });
 
 // Server listening
