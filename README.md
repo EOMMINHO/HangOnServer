@@ -1,8 +1,15 @@
 # Introduction
 
-This is a KAIST CS473 Project.
+This is a KAIST CS473 Project aims to solve the following problem statement.
+
+Drinking online via the current video chat system fails to give the liveness of offline parties and has difficulties in providing dynamic interactions between the group members.
 
 # Usage
+
+## Settings
+
+- .env file describes the environment variables the problem will use.
+- Paste the path of key and certification to use HTTPS (required)
 
 ## Deploy
 
@@ -21,17 +28,23 @@ The following text shows how to call API as a socket io message.
 
 Every API follows the above rull.
 
-- host (playerName)
-  - (hostResponse) returns the room name created
-- join (playerName, roomName)
-  - (joinResponse) return true if successful, otherwise return false
-- clink (playerName, roomName)
-  - (clinkResponse) return the player name who requested clinking
-- game (playerName, gameName, roomName)
+- host (userName)
+  - (hostResponse) returns the pair (roomName, participants).
+- join (userName, roomName)
+  - (joinResponse) returns (true, participants) if successful, otherwise return false.
+- disconnect ()
+  - (disconnectResponse) delete the user disconnected from the global varaible, and return the updated participants.
+- clink (userName, roomName)
+  - (clinkResponse) return the player name who requested clinking.
+- clinkAgree (userName, roomName)
+  - (clinkAgreeResponse) return the userName who agreed on clinking.
+- game (userName, gameName, roomName)
   - (gameResponse) return the player and game name requested
-- attention (playerName, roomName)
+- attention (userName, roomName)
   - (attentionResponse) return the player name who requested to attention
-- seatSwap (playerName1, playerName2, roomName)
+- attentionAgree (userName, roomName)
+  - (attentionAgreeResponse) return the participants.
+- seatSwap (userName1, userName2, roomName)
   - (seatSwapResponse) return the participants object
 - seatShuffle (roomName)
   - (seatShuffleResponse) return the participants object
@@ -39,23 +52,47 @@ Every API follows the above rull.
   - on developing
 - backgroundSound
   - on developing
+- RTC_offer (data, offerer, receiver, roomName)
+  - (RTC_answer) return (offerer, receiver, data)
 
 # Implementation Details
 
 ## Schema of global room variable
 
 - isempty: whether the room is empty or not
-- participants: pair of (name, seat#)
+- participants: pair of (name, participant instance)
 - maxSeats: maximum seat of a desk
+- clinkInProgress: whether the clink is on-going or not.
+- gameInProgress: whether the game is on-going or not.
+- attentionInProgress: whether the attention is on-going or not.
 
 ```
-{
+roomSchema = {
   isEmpty: false,
   participants: {
-      GilDong: 1,
-      Buffet: 3,
-      Merona: 2
-  },
+    userName: instanceOf(ParticipantSchema)
+  }
   maxSeats: 8,
+  clinkInProgress: false,
+  gameInProgress: false,
+  attentionInProgress: false
 };
 ```
+
+## Schema of participants variable
+
+- seatNumber: number according to seat configuration
+- attention: whether the participant is in-attention
+
+```
+participantSchema = {
+  seatNumber: null,
+  attention: false
+}
+```
+
+## Seat Configurations (unconfirmed)
+
+1 2 3 4
+
+5 6 7 8
