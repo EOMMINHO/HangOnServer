@@ -17,7 +17,7 @@ const io = require("socket.io")(https, {
     methods: "*",
   },
 });
-let connection = require("./router/connection");
+const connection = require("./router/connection");
 const utils = require("./utils/utils");
 const shuffle = require("shuffle-array");
 const cloneDeep = require("lodash.clonedeep");
@@ -59,7 +59,6 @@ io.on("connection", (socket) => {
         );
       }
     }
-    console.log(infoObj);
   });
   // Server received a host call
   socket.on("host", (playerName) => {
@@ -113,10 +112,10 @@ io.on("connection", (socket) => {
     }
   });
   // Clink Agreement call
-  socket.on("clinkAgree", (playerName, roomName) => {
+  socket.on("clinkAgree", (userName, roomName) => {
     if (infoObj[roomName].clinkInProgress) {
-      // someone already request clink
-      io.to(roomName).emit("clinkAgreeResponse", playerName);
+      // someone already requested clink
+      io.to(roomName).emit("clinkAgreeResponse", userName);
     }
   });
   // Game call
