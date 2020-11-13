@@ -1,6 +1,8 @@
 require("dotenv").config();
 let app = require("express")();
-let http = require("http").createServer(app);
+const http = require("http").createServer(app);
+const https = require("https");
+const fs = require("fs");
 let io = require("socket.io")(http, {
   cors: {
     origin: "*",
@@ -167,6 +169,18 @@ io.on("connection", (socket) => {
 });
 
 // Server listening
-http.listen(process.env.PORT, () => {
-  console.log(`listening on port ${process.env.PORT}`);
+const options = {
+  key: fs.readFileSync(
+    "/etc/letsencrypt/live/hangonserver.minhoeom.com/privkey.pem"
+  ),
+  cert: fs.readFileSync(
+    "/etc/letsencrypt/live/hangonserver.minhoeom.com/fullchain.pem"
+  ),
+};
+
+http.listen(process.env.HTTP_PORT, () => {
+  console.log(`listening on port ${process.env.HTTP_PORT}`);
+});
+https.createServer(options, app).listen(process.env.HTTPS_PORT, () => {
+  console.log(`listening on port ${process.env.HTTPS_PORT}`);
 });

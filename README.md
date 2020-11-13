@@ -10,6 +10,8 @@ This is a KAIST CS473 Project.
 
 2. command "npm start" will start the server with PORT written in .env file.
 
+- When deploying server at previleged ports (e.g. 80), first need to be a superuser. command "sudo -i" will change you to root user.
+
 ## API call
 
 The following text shows how to call API as a socket io message.
