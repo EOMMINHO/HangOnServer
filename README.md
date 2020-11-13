@@ -1,6 +1,6 @@
 # Introduction
 
-This is a KAIST CS473 Project aims to solve the following problem statement.
+This is a KAIST CS473 project aims to solve the following problem statement.
 
 Drinking online via the current video chat system fails to give the liveness of offline parties and has difficulties in providing dynamic interactions between the group members.
 

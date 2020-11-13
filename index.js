@@ -81,6 +81,10 @@ io.on("connection", (socket) => {
   socket.on("join", (playerName, roomName) => {
     // change object information
     if (Object.keys(infoObj).includes(roomName)) {
+      // if there is duplicated userName, emit false and close.
+      if (Object.keys(infoObj[roomName].participants).includes(playerName)) {
+        return socket.emit("joinResponse", false, "Duplicated userName");
+      }
       socket.join(roomName);
       socket.roomName = roomName;
       socket.playerName = playerName;
@@ -95,7 +99,7 @@ io.on("connection", (socket) => {
       );
     } else {
       // fail to enter the room
-      socket.emit("joinResponse", false);
+      socket.emit("joinResponse", false, "There is no such room");
     }
   });
   // Clink call
