@@ -98,8 +98,10 @@ io.on("connection", (socket) => {
   // Background Noise
   socket.on("backgroundSound", (roomName) => {});
   // video chat
-  socket.on("RTC_offer", (data, offerer, receiver, roomName) => socketHelper.RTC_offer(socket, data, offerer, receiver, roomName));
-
+  socket.on("RTC_offer", (data, offerer, receiver, roomName) =>
+    socketHelper.RTC_offer(socket, data, offerer, receiver, roomName)
+  );
+});
 // Server listening
 
 http.listen(process.env.HTTP_PORT, () => {
