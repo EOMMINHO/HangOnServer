@@ -103,71 +103,101 @@ io.on("connection", (socket) => {
   });
   // Clink call
   socket.on("clink", (playerName, roomName) => {
-    if (infoObj[roomName].clinkInProgress) {
-      // someone already request clink
-      socket.emit("clinkResponse", false, playerName);
-    } else {
-      infoObj[roomName].clinkInProgress = true;
-      io.to(roomName).emit("clinkResponse", true, playerName);
+    try {
+      if (infoObj[roomName].clinkInProgress) {
+        // someone already request clink
+        socket.emit("clinkResponse", false, playerName);
+      } else {
+        infoObj[roomName].clinkInProgress = true;
+        io.to(roomName).emit("clinkResponse", true, playerName);
+      }
+    } catch (error) {
+      console.log(error);
     }
   });
   // Clink Agreement call
   socket.on("clinkAgree", (userName, roomName) => {
-    if (infoObj[roomName].clinkInProgress) {
-      // someone already requested clink
-      io.to(roomName).emit("clinkAgreeResponse", userName);
+    try {
+      if (infoObj[roomName].clinkInProgress) {
+        // someone already requested clink
+        io.to(roomName).emit("clinkAgreeResponse", userName);
+      }
+    } catch (error) {
+      console.log(error);
     }
   });
   // Game call
   socket.on("game", (playerName, gameName, roomName) => {
-    if (infoObj[roomName].gameInProgress) {
-      io.to(roomName).emit("gameFail", playerName);
-      // 누가 사용 중이면 요청 실패 전송
-    } else {
-      io.to(roomName).emit("gameResponse", playerName, gameName);
+    try {
+      if (infoObj[roomName].gameInProgress) {
+        io.to(roomName).emit("gameFail", playerName);
+      } else {
+        io.to(roomName).emit("gameResponse", playerName, gameName);
+      }
+    } catch (error) {
+      console.log(error);
     }
   });
   // Attention call
   socket.on("attention", (playerName, roomName) => {
-    if (infoObj[roomName].attentionInProgress) {
-      socket.emit("attentionResponse", false, playerName);
-    } else {
-      infoObj[roomName].attentionInProgress = true;
-      infoObj[roomName].participants[playerName].attention = true;
-      io.to(roomName).emit(
-        "attentionResponse",
-        true,
-        infoObj[roomName].participants
-      );
+    try {
+      if (infoObj[roomName].attentionInProgress) {
+        socket.emit("attentionResponse", false, playerName);
+      } else {
+        infoObj[roomName].attentionInProgress = true;
+        infoObj[roomName].participants[playerName].attention = true;
+        io.to(roomName).emit(
+          "attentionResponse",
+          true,
+          infoObj[roomName].participants
+        );
+      }
+    } catch (error) {
+      console.log(error);
     }
   });
   // Attention agree call
   socket.on("attentionAgree", (playerName, roomName) => {
-    infoObj[roomName].participants[playerName].attention = true;
-    io.to(roomName).emit(
-      "attentionAgreeResponse",
-      infoObj[roomName].participants
-    );
-    if (utils.isEveryAttention(infoObj)) {
-      infoObj[roomName].attentionInProgress = false;
+    try {
+      infoObj[roomName].participants[playerName].attention = true;
+      io.to(roomName).emit(
+        "attentionAgreeResponse",
+        infoObj[roomName].participants
+      );
+      if (utils.isEveryAttention(infoObj)) {
+        infoObj[roomName].attentionInProgress = false;
+      }
+    } catch (error) {
+      console.log(error);
     }
   });
   // Seat Swap
   socket.on("seatSwap", (playerName1, playerName2, roomName) => {
     // swap
-    let tmp = infoObj[roomName].participants[playerName1];
-    infoObj[roomName].participants[playerName1] =
-      infoObj[roomName].participants[playerName2];
-    infoObj[roomName].participants[playerName2] = tmp;
-    io.to(roomName).emit("seatSwapResponse", infoObj[roomName].participants);
+    try {
+      let tmp = infoObj[roomName].participants[playerName1];
+      infoObj[roomName].participants[playerName1] =
+        infoObj[roomName].participants[playerName2];
+      infoObj[roomName].participants[playerName2] = tmp;
+      io.to(roomName).emit("seatSwapResponse", infoObj[roomName].participants);
+    } catch (error) {
+      console.log(error);
+    }
   });
   // Seat Shuffle
   socket.on("seatShuffle", (roomName) => {
-    let newSeats = shuffle(Object.values(infoObj[roomName].participants));
-    Object.keys(infoObj[roomName].participants).forEach((key, idx) => {
-      infoObj[roomName].participants[key] = newSeats[idx];
-    });
-    io.to(roomName).emit("seatShuffleResponse", infoObj[roomName].participants);
+    try {
+      let newSeats = shuffle(Object.values(infoObj[roomName].participants));
+      Object.keys(infoObj[roomName].participants).forEach((key, idx) => {
+        infoObj[roomName].participants[key] = newSeats[idx];
+      });
+      io.to(roomName).emit(
+        "seatShuffleResponse",
+        infoObj[roomName].participants
+      );
+    } catch (error) {
+      console.log(error);
+    }
   });
   // Background Image
   socket.on("backgroundImage", (roomName) => {});
@@ -175,7 +205,11 @@ io.on("connection", (socket) => {
   socket.on("backgroundSound", (roomName) => {});
   // video chat
   socket.on("RTC_offer", (data, offerer, receiver, roomName) => {
-    socket.to(roomName).emit("RTC_answer", offerer, receiver, data);
+    try {
+      socket.to(roomName).emit("RTC_answer", offerer, receiver, data);
+    } catch (error) {
+      console.log(error);
+    }
   });
 });
 
