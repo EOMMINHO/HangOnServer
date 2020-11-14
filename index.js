@@ -17,6 +17,7 @@ const io = require("socket.io")(https, {
     methods: "*",
   },
 });
+const socketHelper = require("./utils/socket");
 const connection = require("./router/connection");
 const utils = require("./utils/utils");
 const shuffle = require("shuffle-array");
@@ -45,21 +46,7 @@ app.use("/connection", connection);
 // Socket IO
 io.on("connection", (socket) => {
   // Disconnection
-  socket.on("disconnect", () => {
-    // delete participants in the room.
-    if (socket.roomName && socket.playerName) {
-      delete infoObj[socket.roomName].participants[socket.playerName];
-      if (Object.keys(infoObj[socket.roomName].participants).length === 0) {
-        delete infoObj[socket.roomName];
-      } else {
-        io.to(socket.roomName).emit(
-          "disconnectResponse",
-          infoObj[socket.roomName].participants,
-          socket.playerName
-        );
-      }
-    }
-  });
+  socket.on("disconnect", socketHelper.disconnect);
   // Server received a host call
   socket.on("host", (playerName) => {
     // make an empty room
