@@ -46,7 +46,7 @@ app.use("/connection", connection);
 // Socket IO
 io.on("connection", (socket) => {
   // Disconnection
-  socket.on("disconnect", socketHelper.disconnect);
+  socket.on("disconnect", () => socketHelper.disconnect(io, socket, infoObj));
   // Server received a host call
   socket.on("host", (playerName) => {
     // make an empty room
