@@ -27,7 +27,6 @@ function host(socket, infoObj, playerName, roomSchema, participantSchema) {
   socket.join(emptyRoom);
   socket.roomName = emptyRoom;
   socket.playerName = playerName;
-  infoObj[emptyRoom].isEmpty = false;
   infoObj[emptyRoom].participants[playerName] = cloneDeep(participantSchema);
   infoObj[emptyRoom].participants[playerName].seatNumber = 1;
   // emit message
@@ -37,6 +36,13 @@ function host(socket, infoObj, playerName, roomSchema, participantSchema) {
 function join(io, socket, infoObj, playerName, roomName, participantSchema) {
   // change object information
   if (Object.keys(infoObj).includes(roomName)) {
+    // if the room is full, emit false and close.
+    if (
+      Object.keys(infoObj[roomName].participants).length >=
+      infoObj[roomName].maxSeats
+    ) {
+      return socket.emit("joinResponse", false, "Room is full");
+    }
     // if there is duplicated userName, emit false and close.
     if (Object.keys(infoObj[roomName].participants).includes(playerName)) {
       return socket.emit("joinResponse", false, "Duplicated userName");
@@ -51,8 +57,8 @@ function join(io, socket, infoObj, playerName, roomName, participantSchema) {
     );
     io.to(roomName).emit("joinResponse", true, infoObj[roomName].participants);
   } else {
-    // fail to enter the room
-    socket.emit("joinResponse", false, "There is no such room");
+    // if there is no corresponding room, emit false.
+    return socket.emit("joinResponse", false, "There is no such room");
   }
 }
 
@@ -87,6 +93,7 @@ function game(io, infoObj, gameName, userName, roomName) {
     if (infoObj[roomName].gameInProgress) {
       io.to(roomName).emit("gameResponse", false, "Game already in progress");
     } else {
+      infoObj[roomName].gameInProgress = true;
       io.to(roomName).emit("gameResponse", true, userName, gameName);
     }
   } catch (error) {
