@@ -12,7 +12,7 @@ function getRemainSeat(infoObj, roomName) {
 }
 
 function newRoomName(infoObj) {
-  let rand = randomstring.generate(7);
+  let rand = randomstring.generate({ length: 12, readable: true });
   while (true) {
     if (!Object.keys(infoObj).includes(rand)) {
       return rand;
