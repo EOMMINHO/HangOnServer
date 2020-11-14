@@ -120,6 +120,7 @@ io.on("connection", (socket) => {
     try {
       if (infoObj[roomName].clinkInProgress) {
         // someone already requested clink
+        infoObj[roomName].clinkInProgress = false;
         io.to(roomName).emit("clinkAgreeResponse", userName);
       }
     } catch (error) {
