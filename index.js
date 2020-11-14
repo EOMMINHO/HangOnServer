@@ -19,9 +19,6 @@ const io = require("socket.io")(https, {
 });
 const socketHelper = require("./utils/socket");
 const connection = require("./router/connection");
-const utils = require("./utils/utils");
-const shuffle = require("shuffle-array");
-const cloneDeep = require("lodash.clonedeep");
 
 // Global variables
 let roomSchema = {
@@ -48,158 +45,60 @@ io.on("connection", (socket) => {
   // Disconnection
   socket.on("disconnect", () => socketHelper.disconnect(io, socket, infoObj));
   // Server received a host call
-  socket.on("host", (playerName) => {
-    // make an empty room
-    let emptyRoom = utils.newRoomName(infoObj);
-    infoObj[emptyRoom] = cloneDeep(roomSchema);
-    console.log(`${emptyRoom} has been hosted`);
-    // change object information
-    socket.join(emptyRoom);
-    socket.roomName = emptyRoom;
-    socket.playerName = playerName;
-    infoObj[emptyRoom].isEmpty = false;
-    infoObj[emptyRoom].participants[playerName] = cloneDeep(participantSchema);
-    infoObj[emptyRoom].participants[playerName].seatNumber = 1;
-    // emit message
-    socket.emit("hostResponse", emptyRoom, infoObj[emptyRoom].participants);
-  });
+  socket.on("host", (playerName) =>
+    socketHelper.host(
+      socket,
+      infoObj,
+      playerName,
+      roomSchema,
+      participantSchema
+    )
+  );
   // Server received a join call
-  socket.on("join", (playerName, roomName) => {
-    // change object information
-    if (Object.keys(infoObj).includes(roomName)) {
-      // if there is duplicated userName, emit false and close.
-      if (Object.keys(infoObj[roomName].participants).includes(playerName)) {
-        return socket.emit("joinResponse", false, "Duplicated userName");
-      }
-      socket.join(roomName);
-      socket.roomName = roomName;
-      socket.playerName = playerName;
-      infoObj[roomName].participants[playerName] = cloneDeep(participantSchema);
-      infoObj[roomName].participants[
-        playerName
-      ].seatNumber = utils.getRemainSeat(infoObj, roomName);
-      io.to(roomName).emit(
-        "joinResponse",
-        true,
-        infoObj[roomName].participants
-      );
-    } else {
-      // fail to enter the room
-      socket.emit("joinResponse", false, "There is no such room");
-    }
-  });
+  socket.on("join", (userName, roomName) =>
+    socketHelper.join(
+      io,
+      socket,
+      infoObj,
+      userName,
+      roomName,
+      participantSchema
+    )
+  );
   // Clink call
-  socket.on("clink", (playerName, roomName) => {
-    try {
-      if (infoObj[roomName].clinkInProgress) {
-        // someone already request clink
-        socket.emit("clinkResponse", false, playerName);
-      } else {
-        infoObj[roomName].clinkInProgress = true;
-        io.to(roomName).emit("clinkResponse", true, playerName);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  });
+  socket.on("clink", (userName, roomName) =>
+    socketHelper.clink(io, socket, infoObj, userName, roomName)
+  );
   // Clink Agreement call
-  socket.on("clinkAgree", (userName, roomName) => {
-    try {
-      if (infoObj[roomName].clinkInProgress) {
-        // someone already requested clink
-        infoObj[roomName].clinkInProgress = false;
-        io.to(roomName).emit("clinkAgreeResponse", userName);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  });
+  socket.on("clinkAgree", (userName, roomName) =>
+    socketHelper.clinkAgree(io, infoObj, userName, roomName)
+  );
   // Game call
-  socket.on("game", (playerName, gameName, roomName) => {
-    try {
-      if (infoObj[roomName].gameInProgress) {
-        io.to(roomName).emit("gameFail", playerName);
-      } else {
-        io.to(roomName).emit("gameResponse", playerName, gameName);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  });
+  socket.on("game", (userName, gameName, roomName) =>
+    socketHelper.game(io, infoObj, gameName, userName, roomName)
+  );
   // Attention call
-  socket.on("attention", (playerName, roomName) => {
-    try {
-      if (infoObj[roomName].attentionInProgress) {
-        socket.emit("attentionResponse", false, playerName);
-      } else {
-        infoObj[roomName].attentionInProgress = true;
-        infoObj[roomName].participants[playerName].attention = true;
-        io.to(roomName).emit(
-          "attentionResponse",
-          true,
-          infoObj[roomName].participants
-        );
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  });
+  socket.on("attention", (userName, roomName) =>
+    socketHelper.attention(io, socket, infoObj, userName, roomName)
+  );
   // Attention agree call
-  socket.on("attentionAgree", (playerName, roomName) => {
-    try {
-      infoObj[roomName].participants[playerName].attention = true;
-      io.to(roomName).emit(
-        "attentionAgreeResponse",
-        infoObj[roomName].participants
-      );
-      if (utils.isEveryAttention(infoObj, roomName)) {
-        infoObj[roomName].attentionInProgress = false;
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  });
+  socket.on("attentionAgree", (playerName, roomName) =>
+    socketHelper.attentionAgree(io, infoObj, playerName, roomName)
+  );
   // Seat Swap
-  socket.on("seatSwap", (playerName1, playerName2, roomName) => {
-    // swap
-    try {
-      let tmp = infoObj[roomName].participants[playerName1];
-      infoObj[roomName].participants[playerName1] =
-        infoObj[roomName].participants[playerName2];
-      infoObj[roomName].participants[playerName2] = tmp;
-      io.to(roomName).emit("seatSwapResponse", infoObj[roomName].participants);
-    } catch (error) {
-      console.log(error);
-    }
-  });
+  socket.on("seatSwap", (playerName1, playerName2, roomName) =>
+    socketHelper.seatSwap(io, infoObj, playerName1, playerName2, roomName)
+  );
   // Seat Shuffle
-  socket.on("seatShuffle", (roomName) => {
-    try {
-      let newSeats = shuffle(Object.values(infoObj[roomName].participants));
-      Object.keys(infoObj[roomName].participants).forEach((key, idx) => {
-        infoObj[roomName].participants[key] = newSeats[idx];
-      });
-      io.to(roomName).emit(
-        "seatShuffleResponse",
-        infoObj[roomName].participants
-      );
-    } catch (error) {
-      console.log(error);
-    }
-  });
+  socket.on("seatShuffle", (roomName) =>
+    socketHelper.seatShuffle(io, infoObj, roomName)
+  );
   // Background Image
   socket.on("backgroundImage", (roomName) => {});
   // Background Noise
   socket.on("backgroundSound", (roomName) => {});
   // video chat
-  socket.on("RTC_offer", (data, offerer, receiver, roomName) => {
-    try {
-      socket.to(roomName).emit("RTC_answer", offerer, receiver, data);
-    } catch (error) {
-      console.log(error);
-    }
-  });
-});
+  socket.on("RTC_offer", (data, offerer, receiver, roomName) => socketHelper.RTC_offer(socket, data, offerer, receiver, roomName));
 
 // Server listening
 
