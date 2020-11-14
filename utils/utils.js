@@ -17,7 +17,7 @@ function newRoomName(infoObj) {
     if (!Object.keys(infoObj).includes(rand)) {
       return rand;
     }
-    rand = randomstring.generate(7);
+    rand = randomstring.generate({ length: 12, readable: true });
   }
 }
 
