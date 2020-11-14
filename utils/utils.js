@@ -21,7 +21,7 @@ function newRoomName(infoObj) {
   }
 }
 
-function isEveryAttention(infoObj) {
+function isEveryAttention(infoObj, roomName) {
   let attention = Object.keys(infoObj[roomName].participants).map((name) => {
     return infoObj[roomName].participants[name].attention;
   });

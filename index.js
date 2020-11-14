@@ -152,7 +152,7 @@ io.on("connection", (socket) => {
         "attentionAgreeResponse",
         infoObj[roomName].participants
       );
-      if (utils.isEveryAttention(infoObj)) {
+      if (utils.isEveryAttention(infoObj, roomName)) {
         infoObj[roomName].attentionInProgress = false;
       }
     } catch (error) {
