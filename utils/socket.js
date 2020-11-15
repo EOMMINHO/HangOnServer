@@ -167,6 +167,14 @@ function RTC_offer(socket, data, offerer, receiver, roomName) {
   }
 }
 
+function videoOff(socket, roomName, userName) {
+  try {
+    socket.to(roomName).emit("videoOffResponse", userName);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 module.exports.disconnect = disconnect;
 module.exports.host = host;
 module.exports.join = join;
@@ -178,3 +186,4 @@ module.exports.attentionAgree = attentionAgree;
 module.exports.seatSwap = seatSwap;
 module.exports.seatShuffle = seatShuffle;
 module.exports.RTC_offer = RTC_offer;
+module.exports.videoOff = videoOff;

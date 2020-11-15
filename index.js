@@ -73,7 +73,9 @@ io.on("connection", (socket) => {
   socket.on("clinkAgree", (userName, roomName) =>
     socketHelper.clinkAgree(io, infoObj, userName, roomName)
   );
-  // Game call
+  /*
+   * Game call
+   */
   socket.on("game", (userName, gameName, roomName) =>
     socketHelper.game(io, infoObj, gameName, userName, roomName)
   );
@@ -100,6 +102,10 @@ io.on("connection", (socket) => {
   // video chat
   socket.on("RTC_offer", (data, offerer, receiver, roomName) =>
     socketHelper.RTC_offer(socket, data, offerer, receiver, roomName)
+  );
+  // video off
+  socket.on("videoOff", (userName, roomName) =>
+    socketHelper.videoOff(socket, roomName, userName)
   );
 });
 // Server listening
