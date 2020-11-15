@@ -24,6 +24,7 @@ const connection = require("./router/connection");
 let roomSchema = {
   isEmpty: true,
   participants: {},
+  clink_participants: {},
   maxSeats: 8,
   clinkInProgress: false,
   gameInProgress: false,
