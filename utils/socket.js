@@ -111,7 +111,7 @@ function attention(io, socket, infoObj, userName, roomName) {
       io.to(roomName).emit(
         "attentionResponse",
         true,
-        infoObj[roomName].participants
+        userName
       );
     }
   } catch (error) {
@@ -122,12 +122,21 @@ function attention(io, socket, infoObj, userName, roomName) {
 function attentionAgree(io, infoObj, playerName, roomName) {
   try {
     infoObj[roomName].participants[playerName].attention = true;
-    io.to(roomName).emit(
-      "attentionAgreeResponse",
-      infoObj[roomName].participants
-    );
     if (utils.isEveryAttention(infoObj, roomName)) {
       infoObj[roomName].attentionInProgress = false;
+      infoObj[roomName].attended = true;
+      io.to(roomName).emit(
+        "attentionAgreeResponse",
+        true
+      )
+    }
+    else {
+      io.to(roomName).emit(
+        "attentionAgreeResponse",
+        false
+      );
+      infoObj[roomName].attentionInProgress = false;
+      infoObj[roomName].attended = false;
     }
   } catch (error) {
     console.log(error);
