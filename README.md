@@ -29,7 +29,7 @@ The following text shows how to call API as a socket io message.
 Every API follows the above rull.
 
 - host (userName)
-  - (hostResponse) returns the pair (roomName, participants).
+  - (hostResponse) returns the pair (true, roomName, participants) if success, (false, errorType) if fail.
 - join (userName, roomName)
   - (joinResponse) returns (true, participants) if successful, otherwise return false.
 - disconnect ()
