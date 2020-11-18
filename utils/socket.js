@@ -4,7 +4,7 @@ const cloneDeep = require("lodash.clonedeep");
 const shuffle = require("shuffle-array");
 
 const userNameSchema = Joi.object({
-  userName: Joi.string().alphanum().min(3).max(64),
+  userName: Joi.string().min(3).max(64),
 });
 
 function disconnect(io, socket, infoObj) {
