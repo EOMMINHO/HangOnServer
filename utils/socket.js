@@ -1,6 +1,11 @@
+const Joi = require("joi");
 const utils = require("./utils");
 const cloneDeep = require("lodash.clonedeep");
 const shuffle = require("shuffle-array");
+
+const userNameSchema = Joi.object({
+  userName: Joi.string().alphanum().min(3).max(64),
+});
 
 function disconnect(io, socket, infoObj) {
   // delete participants in the room.
@@ -19,6 +24,11 @@ function disconnect(io, socket, infoObj) {
 }
 
 function host(socket, infoObj, playerName, roomSchema, participantSchema) {
+  // validate UserName
+  const { error } = userNameSchema.validate({ userName: playerName });
+  if (error) {
+    return socket.emit("hostResponse", false, error.details[0].message);
+  }
   // make an empty room
   let emptyRoom = utils.newRoomName(infoObj);
   infoObj[emptyRoom] = cloneDeep(roomSchema);
@@ -30,10 +40,15 @@ function host(socket, infoObj, playerName, roomSchema, participantSchema) {
   infoObj[emptyRoom].participants[playerName] = cloneDeep(participantSchema);
   infoObj[emptyRoom].participants[playerName].seatNumber = 1;
   // emit message
-  socket.emit("hostResponse", emptyRoom, infoObj[emptyRoom].participants);
+  socket.emit("hostResponse", true, emptyRoom, infoObj[emptyRoom].participants);
 }
 
 function join(io, socket, infoObj, playerName, roomName, participantSchema) {
+  // validate UserName
+  const { error } = userNameSchema.validate({ userName: playerName });
+  if (error) {
+    return socket.emit("joinResponse", false, error.details[0].message);
+  }
   // change object information
   if (Object.keys(infoObj).includes(roomName)) {
     // if the room is full, emit false and close.
