@@ -166,10 +166,10 @@ function clinkAgree(io, infoObj, userName, roomName) {
 function seatSwap(io, infoObj, playerName1, playerName2, roomName) {
   // swap
   try {
-    let tmp = infoObj[roomName].participants[playerName1];
-    infoObj[roomName].participants[playerName1] =
-      infoObj[roomName].participants[playerName2];
-    infoObj[roomName].participants[playerName2] = tmp;
+    let tmp = infoObj[roomName].participants[playerName1].seatNumber;
+    infoObj[roomName].participants[playerName1].seatNumber =
+      infoObj[roomName].participants[playerName2].seatNumber;
+    infoObj[roomName].participants[playerName2].seatNumber = tmp;
     io.to(roomName).emit("seatSwapResponse", infoObj[roomName].participants);
   } catch (error) {
     console.log(error);
