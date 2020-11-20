@@ -138,13 +138,13 @@ function attention(io, socket, infoObj, userName, roomName) {
 function attentionAgree(io, infoObj, playerName, roomName) {
   try {
     infoObj[roomName].participants[playerName].attention = true;
-    /*io.to(roomName).emit(
+    io.to(roomName).emit(
       "attentionAgreeResponse",
       infoObj[roomName].participants
-    );*/
+    );
     if (utils.isEveryAttention(infoObj, roomName)) {
       infoObj[roomName].attentionInProgress = false;
-      io.to(roomName).emit("attentionOn", playerName);
+      io.to(roomName).emit("attentionOn", infoObj[roomName].participants);
     }
   } catch (error) {
     console.log(error);
