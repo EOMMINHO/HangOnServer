@@ -142,6 +142,7 @@ function attentionAgree(io, infoObj, playerName, roomName) {
       "attentionAgreeResponse",
       infoObj[roomName].participants
     );
+    console.log(infoObj[roomName].participants);
     if (utils.isEveryAttention(infoObj, roomName)) {
       infoObj[roomName].attentionInProgress = false;
       io.to(roomName).emit("attentionOn", infoObj[roomName].participants);
