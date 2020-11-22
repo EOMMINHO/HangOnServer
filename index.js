@@ -101,7 +101,7 @@ io.on("connection", (socket) => {
   socket.on("backgroundSound", (roomName) => {});
   // Youtube link change
   socket.on("youtube link", (youtubelink, roomName) => {
-    socketHelper.youtubelink(io, infoObj, youtubelink, roomName)
+    socketHelper.youtubeLink(io, infoObj, youtubelink, roomName)
   });
   // video chat
   socket.on("RTC_offer", (data, offerer, receiver, roomName) =>
