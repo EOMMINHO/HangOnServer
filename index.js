@@ -99,6 +99,10 @@ io.on("connection", (socket) => {
   socket.on("backgroundImage", (roomName) => {});
   // Background Noise
   socket.on("backgroundSound", (roomName) => {});
+  // Youtube link change
+  socket.on("youtube link", (youtubelink, roomName) => {
+    socketHelper.youtubelink(io, infoObj, youtubelink, roomName)
+  });
   // video chat
   socket.on("RTC_offer", (data, offerer, receiver, roomName) =>
     socketHelper.RTC_offer(socket, data, offerer, receiver, roomName)

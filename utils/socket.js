@@ -142,7 +142,6 @@ function attentionAgree(io, infoObj, playerName, roomName) {
       "attentionAgreeResponse",
       infoObj[roomName].participants
     );
-    console.log(infoObj[roomName].participants);
     if (utils.isEveryAttention(infoObj, roomName)) {
       infoObj[roomName].attentionInProgress = false;
       io.to(roomName).emit("attentionOn", infoObj[roomName].participants);
@@ -184,6 +183,14 @@ function seatShuffle(io, infoObj, roomName) {
       infoObj[roomName].participants[key] = newSeats[idx];
     });
     io.to(roomName).emit("seatShuffleResponse", infoObj[roomName].participants);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+function youtubelink(io, infoObj, youtubelink, roomName) {
+  try {
+    io.to(roomName).emit("youtube link", youtubelink);
   } catch (error) {
     console.log(error);
   }
