@@ -82,13 +82,7 @@ function join(io, socket, infoObj, playerName, roomName, participantSchema) {
 
 function clink(io, socket, infoObj, playerName, roomName) {
   try {
-    if (infoObj[roomName].clinkInProgress) {
-      // someone already request clink
-      socket.emit("clinkResponse", false, playerName);
-    } else {
-      infoObj[roomName].clinkInProgress = true;
-      io.to(roomName).emit("clinkResponse", true, playerName);
-    }
+    io.to(roomName).emit("clinkResponse", true, playerName);
   } catch (error) {
     console.log(error);
   }
@@ -122,6 +116,7 @@ function game(io, infoObj, gameName, userName, roomName) {
 function attention(io, socket, infoObj, userName, roomName) {
   try {
     if (infoObj[roomName].attentionInProgress) {
+      infoObj[roomName].attentionInProgress = false;
       socket.emit("attentionResponse", false, userName);
     } else {
       infoObj[roomName].attentionInProgress = true;
