@@ -141,13 +141,13 @@ function attention(io, socket, infoObj, userName, roomName) {
 function attentionAgree(io, infoObj, playerName, roomName) {
   try {
     infoObj[roomName].participants[playerName].attention = true;
-    /*io.to(roomName).emit(
+    io.to(roomName).emit(
       "attentionAgreeResponse",
       infoObj[roomName].participants
-    );*/
+    );
     if (utils.isEveryAttention(infoObj, roomName)) {
       infoObj[roomName].attentionInProgress = false;
-      io.to(roomName).emit("attentionOn", playerName);
+      io.to(roomName).emit("attentionOn", infoObj[roomName].participants);
     }
   } catch (error) {
     console.log(error);
@@ -191,6 +191,14 @@ function seatShuffle(io, infoObj, roomName) {
   }
 }
 
+function youtubeLink(io, infoObj, youtubelink, roomName) {
+  try {
+    io.to(roomName).emit("youtube link", youtubelink);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 function RTC_offer(socket, data, offerer, receiver, roomName) {
   try {
     socket.to(roomName).emit("RTC_answer", offerer, receiver, data);
@@ -217,5 +225,6 @@ module.exports.attention = attention;
 module.exports.attentionAgree = attentionAgree;
 module.exports.seatSwap = seatSwap;
 module.exports.seatShuffle = seatShuffle;
+module.exports.youtubeLink = youtubeLink;
 module.exports.RTC_offer = RTC_offer;
 module.exports.videoOff = videoOff;
