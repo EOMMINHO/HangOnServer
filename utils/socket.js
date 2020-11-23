@@ -129,8 +129,8 @@ function attention(io, socket, infoObj, userName, roomName) {
       io.to(roomName).emit(
         "attentionResponse",
         true,
-        userName
-        //infoObj[roomName].participants
+        userName,
+        infoObj[roomName].participants
       );
     }
   } catch (error) {
