@@ -42,7 +42,7 @@ Every API follows the above rull.
   - (seatSwapResponse) return the participants object.
 - seatShuffle (roomName)
   - (seatShuffleResponse) return the participants object.
-- game 
+- game
   - later to be developed
 - backgroundImage
   - later to be developed
