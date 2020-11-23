@@ -33,25 +33,21 @@ Every API follows the above rull.
 - join (userName, roomName)
   - (joinResponse) returns (true, participants) if successful, otherwise return false.
 - disconnect ()
-  - (disconnectResponse) delete the user disconnected from the global varaible, and return the updated participants.
+  - (disconnectResponse) delete the user disconnected from the global variable, and return the updated participants.
 - clink (userName, roomName)
-  - (clinkResponse) return the player name who requested clinking.
-- clinkAgree (userName, roomName)
-  - (clinkAgreeResponse) return the userName who agreed on clinking.
-- game (userName, gameName, roomName)
-  - (gameResponse) return the player and game name requested
+  - (clinkResponse) return the player name who requested clink.
 - attention (userName, roomName)
-  - (attentionResponse) return the player name who requested to attention
-- attentionAgree (userName, roomName)
-  - (attentionAgreeResponse) return the participants.
+  - (attentionResponse) return the player name who requested to get attention.
 - seatSwap (userName1, userName2, roomName)
-  - (seatSwapResponse) return the participants object
+  - (seatSwapResponse) return the participants object.
 - seatShuffle (roomName)
-  - (seatShuffleResponse) return the participants object
+  - (seatShuffleResponse) return the participants object.
+- game 
+  - later to be developed
 - backgroundImage
-  - on developing
+  - later to be developed
 - backgroundSound
-  - on developing
+  - later to be developed
 - RTC_offer (data, offerer, receiver, roomName)
   - (RTC_answer) return (offerer, receiver, data)
 
@@ -91,8 +87,8 @@ participantSchema = {
 }
 ```
 
-## Seat Configurations (unconfirmed)
+## Seat Configurations
 
-1 2 3 4
+1 3 5 7
 
-5 6 7 8
+2 4 6 8
