@@ -116,6 +116,7 @@ function game(io, infoObj, gameName, userName, roomName) {
 function attention(io, socket, infoObj, userName, roomName) {
   try {
     if (infoObj[roomName].attentionInProgress) {
+      infoObj[roomName].attentionInProgress = false;
       socket.emit("attentionResponse", false, userName);
     } else {
       infoObj[roomName].attentionInProgress = true;
