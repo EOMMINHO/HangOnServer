@@ -69,10 +69,6 @@ io.on("connection", (socket) => {
   socket.on("clink", (userName, roomName) =>
     socketHelper.clink(io, socket, infoObj, userName, roomName)
   );
-  // Clink Agreement call
-  socket.on("clinkAgree", (userName, roomName) =>
-    socketHelper.clinkAgree(io, infoObj, userName, roomName)
-  );
   /*
    * Game call
    */
@@ -82,10 +78,6 @@ io.on("connection", (socket) => {
   // Attention call
   socket.on("attention", (userName, roomName) =>
     socketHelper.attention(io, socket, infoObj, userName, roomName)
-  );
-  // Attention agree call
-  socket.on("attentionAgree", (playerName, roomName) =>
-    socketHelper.attentionAgree(io, infoObj, playerName, roomName)
   );
   // Seat Swap
   socket.on("seatSwap", (playerName1, playerName2, roomName) =>
@@ -101,7 +93,7 @@ io.on("connection", (socket) => {
   socket.on("backgroundSound", (roomName) => {});
   // Youtube link change
   socket.on("youtube link", (youtubelink, roomName) => {
-    socketHelper.youtubeLink(io, infoObj, youtubelink, roomName)
+    socketHelper.youtubeLink(io, infoObj, youtubelink, roomName);
   });
   // video chat
   socket.on("RTC_offer", (data, offerer, receiver, roomName) =>
