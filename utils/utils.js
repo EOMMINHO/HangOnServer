@@ -31,6 +31,16 @@ function isEveryAttention(infoObj, roomName) {
   return true;
 }
 
+function squeezeSeats(infoObj, roomName, deletedNumber) {
+  Object.keys(infoObj[roomName].participants).forEach((name) => {
+    let seat = infoObj[roomName].participants[name].seatNumber;
+    if (seat > deletedNumber) {
+      infoObj[roomName].participants[name].seatNumber = seat - 1;
+    }
+  });
+}
+
 module.exports.getRemainSeat = getRemainSeat;
 module.exports.newRoomName = newRoomName;
 module.exports.isEveryAttention = isEveryAttention;
+module.exports.squeezeSeats = squeezeSeats;
