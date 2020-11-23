@@ -82,13 +82,7 @@ function join(io, socket, infoObj, playerName, roomName, participantSchema) {
 
 function clink(io, socket, infoObj, playerName, roomName) {
   try {
-    if (infoObj[roomName].clinkInProgress) {
-      // someone already request clink
-      socket.emit("clinkResponse", false, playerName);
-    } else {
-      infoObj[roomName].clinkInProgress = true;
-      io.to(roomName).emit("clinkResponse", true, playerName);
-    }
+    io.to(roomName).emit("clinkResponse", true, playerName);
   } catch (error) {
     console.log(error);
   }
