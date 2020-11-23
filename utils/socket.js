@@ -117,7 +117,12 @@ function attention(io, socket, infoObj, userName, roomName) {
   try {
     if (infoObj[roomName].attentionInProgress) {
       infoObj[roomName].attentionInProgress = false;
-      socket.emit("attentionResponse", false, userName);
+      socket.emit(
+        "attentionResponse",
+        false,
+        userName,
+        infoObj[roomName].participants
+      );
     } else {
       infoObj[roomName].attentionInProgress = true;
       infoObj[roomName].participants[userName].attention = true;
