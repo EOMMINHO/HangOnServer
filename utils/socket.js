@@ -16,7 +16,7 @@ function disconnect(io, socket, infoObj) {
     if (Object.keys(infoObj[socket.roomName].participants).length === 0) {
       delete infoObj[socket.roomName];
     } else {
-      utils.squeezeSeats(infoObj, roomName, deletedSeat);
+      utils.squeezeSeats(infoObj, socket.roomName, deletedSeat);
       io.to(socket.roomName).emit(
         "disconnectResponse",
         infoObj[socket.roomName].participants,
