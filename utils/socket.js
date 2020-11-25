@@ -194,6 +194,7 @@ function seatShuffle(io, infoObj, roomName) {
 
 function youtubeLink(io, infoObj, youtubelink, roomName) {
   try {
+    infoObj[roomName].youtubeLink = youtubelink;
     io.to(roomName).emit("youtube link", youtubelink);
   } catch (error) {
     console.log(error);

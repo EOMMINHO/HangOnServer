@@ -28,6 +28,8 @@ let roomSchema = {
   clinkInProgress: false,
   gameInProgress: false,
   attentionInProgress: false,
+  youtubeLink:
+    "https://www.youtube.com/watch?v=k7YzgZf-V5U&t=230s&ab_channel=%EC%86%8C%EB%A6%AC%EC%97%B0%EA%B5%AC%EC%86%8C-S.LAB",
 };
 
 let participantSchema = {
@@ -94,6 +96,9 @@ io.on("connection", (socket) => {
   // Youtube link change
   socket.on("youtube link", (youtubelink, roomName) => {
     socketHelper.youtubeLink(io, infoObj, youtubelink, roomName);
+  });
+  socket.on("youtubeLinkRequest", (roomName) => {
+    socket.emit(infoObj[roomName].youtubeLink);
   });
   // video chat
   socket.on("RTC_offer", (data, offerer, receiver, roomName) =>
