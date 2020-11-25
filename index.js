@@ -98,7 +98,11 @@ io.on("connection", (socket) => {
     socketHelper.youtubeLink(io, infoObj, youtubelink, roomName);
   });
   socket.on("youtubeLinkRequest", (roomName) => {
-    socket.emit("youtubeLinkResponse", infoObj[roomName].youtubeLink);
+    try {
+      socket.emit("youtubeLinkResponse", infoObj[roomName].youtubeLink);
+    } catch (error) {
+      console.log(error);
+    }
   });
   // video chat
   socket.on("RTC_offer", (data, offerer, receiver, roomName) =>
