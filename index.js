@@ -89,6 +89,9 @@ io.on("connection", (socket) => {
   socket.on("seatShuffle", (roomName) =>
     socketHelper.seatShuffle(io, infoObj, roomName)
   );
+  socket.on("emoji", (playerName, roomName, num) =>
+    socketHelper.emoji(io, infoObj, playerName, roomName, num)
+  );
   // Background Image
   socket.on("backgroundImage", (roomName) => {});
   // Background Noise

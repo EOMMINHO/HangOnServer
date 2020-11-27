@@ -192,6 +192,14 @@ function seatShuffle(io, infoObj, roomName) {
   }
 }
 
+function emoji(io, infoObj, playerName, roomName, num) {
+  try {
+    io.to(roomName).emit("emojiResponse", playerName, num);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 function youtubeLink(io, infoObj, youtubelink, roomName) {
   try {
     infoObj[roomName].youtubeLink = youtubelink;
@@ -227,6 +235,7 @@ module.exports.attention = attention;
 module.exports.attentionAgree = attentionAgree;
 module.exports.seatSwap = seatSwap;
 module.exports.seatShuffle = seatShuffle;
+module.exports.emoji = emoji;
 module.exports.youtubeLink = youtubeLink;
 module.exports.RTC_offer = RTC_offer;
 module.exports.videoOff = videoOff;
