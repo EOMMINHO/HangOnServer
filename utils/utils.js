@@ -1,4 +1,5 @@
-const randomstring = require("randomstring");
+// const randomstring = require("randomstring");
+var randomWords = require('random-words');
 
 function getRemainSeat(infoObj, roomName) {
   let seatNumbers = Object.keys(infoObj[roomName].participants).map((name) => {
@@ -12,12 +13,14 @@ function getRemainSeat(infoObj, roomName) {
 }
 
 function newRoomName(infoObj) {
-  let rand = randomstring.generate({ length: 12, readable: true });
+  //let rand = randomstring.generate({ length: 12, readable: true });
+  let rand = randomWords({ exactly: 2, join: ' ' })
   while (true) {
     if (!Object.keys(infoObj).includes(rand)) {
       return rand;
     }
-    rand = randomstring.generate({ length: 12, readable: true });
+    rand = randomWords({ exactly: 2, join: ' ' })
+    //rand = randomstring.generate({ length: 12, readable: true });
   }
 }
 

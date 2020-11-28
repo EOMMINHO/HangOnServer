@@ -17,6 +17,7 @@
     "joi": "^17.3.0",
     "lodash.clonedeep": "^4.5.0",
     "node-turn": "0.0.6",
+    "random-words": "^1.1.1",
     "randomstring": "^1.1.5",
     "shuffle-array": "^1.0.1",
     "socket.io": "^3.0.1"
