@@ -200,6 +200,14 @@ function emoji(io, infoObj, playerName, roomName, num) {
   }
 }
 
+function icebreak(io, playerName, roomName){
+  try {
+    io.to(roomName).emit("icebreakResponse", playerName);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
 function youtubeLink(io, infoObj, youtubelink, roomName) {
   try {
     infoObj[roomName].youtubeLink = youtubelink;
@@ -239,3 +247,4 @@ module.exports.emoji = emoji;
 module.exports.youtubeLink = youtubeLink;
 module.exports.RTC_offer = RTC_offer;
 module.exports.videoOff = videoOff;
+module.exports.icebreak = icebreak;

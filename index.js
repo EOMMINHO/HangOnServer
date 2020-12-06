@@ -92,6 +92,9 @@ io.on("connection", (socket) => {
   socket.on("emoji", (playerName, roomName, num) =>
     socketHelper.emoji(io, infoObj, playerName, roomName, num)
   );
+  socket.on("icebreak", (playerName, roomName) =>
+    socketHelper.icebreak(io, playerName, roomName)
+  );
   // Background Image
   socket.on("backgroundImage", (roomName) => {});
   // Background Noise
